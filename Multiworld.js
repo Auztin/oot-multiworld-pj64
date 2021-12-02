@@ -9,7 +9,6 @@ var consoleMode = 0;
 var clients = {};
 var sockets = [];
 var currentMode = -1;
-var inited = false;
 
 function inArray(val, array) {
   return array.indexOf(val) >= 0
@@ -209,13 +208,15 @@ function parseLine(line, socket) {
     if (updated) saveState();
     var countForPlayer = 0
     if (r.c == undefined) r.c = 0;
-    var items = [];
-    for (var key in sent_items[r.t]) {
-      if (sent_items[r.t].hasOwnProperty(key)) {
-        items.push(itemToBizhawk(key, r.t, sent_items[r.t][key], items.length+1));
+    if (oot.ready) {
+      var items = [];
+      for (var key in sent_items[r.t]) {
+        if (sent_items[r.t].hasOwnProperty(key)) {
+          items.push(itemToBizhawk(key, r.t, sent_items[r.t][key], items.length+1));
+        }
       }
+      if (items.length > r.c) sendMessage('r'+room.name+','+items.join(','));
     }
-    if (items.length > r.c) sendMessage('r'+room.name+','+items.join(','));
   }
   return true;
 }
@@ -254,8 +255,8 @@ function setupRoom() {
                 sendMessage('q'+client+',q:', c);
                 console.log(clients[client].name+' disconnected.');
                 delete player_names[clients[client].num];
+                const index = sockets.indexOf(clients[client].socket);
                 delete clients[client];
-                const index = sockets.indexOf(room.socket);
                 if (index > -1) {
                   sockets.splice(index, 1);
                 }
@@ -387,20 +388,19 @@ function getCurrentMode() {
 
   var mode = -1;
   var logo_state = mem.u32[0x8011F200];
-  if (logo_state == 0x802C5880 || logo_state == 0x00000000) {
-    mode = 0;
-  }
-  else {
+  var state = mem.u8[0x8011B933];
+  if (logo_state == 0x802C5880) mode = 0;
+  else if (logo_state != 0 || state) {
     var state_main = mem.u8[0x8011B92F];
     if (state_main == 1) mode = 1;
     else if (state_main == 2) mode = 2;
     else {
       var menu_state = mem.u8[0x801D8DD5];
       if (menu_state == 0) {
-        if (mem.u32[0x801DB09C] & 0x000000F0 || mem.u16[0x8011a600] <= 0) mode = 6;
+        if (state == 1 && (mem.u32[0x801DB09C] & 0x000000F0 || mem.u16[0x8011a600] <= 0)) mode = 6;
         else {
-          if (mem.u8[0x8011B933] == 4) mode = 4;
-          else mode = 3;
+          if (state == 4) mode = 4;
+          else if (state == 1) mode = 3;
         }
       }
       else if ((0 < menu_state && menu_state < 9) || menu_state == 13 || menu_state == 18 || menu_state == 19) mode = 5;
@@ -433,16 +433,14 @@ function sendItemCount() {
 }
 setInterval(sendItemCount, 60000);
 
-inited = initVars();
+initVars();
 setInterval(function () {
   currentMode = getCurrentMode();
-  if (currentMode == -1) {
-    inited = false;
+  if (currentMode <= 2) {
     oot.ready = false;
     return;
   }
-  if (currentMode == 0 && !inited) inited = initVars();
-  if (currentMode != 0 && inited) inited = false;
+  if (!oot.ready && currentMode == 3) initVars();
   if (oot.ready) {
     if (oot.outgoing_key) {
       sendItem(oot.outgoing_item, oot.outgoing_player, oot.outgoing_key);
