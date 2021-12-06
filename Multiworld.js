@@ -388,19 +388,20 @@ function getCurrentMode() {
 
   var mode = -1;
   var logo_state = mem.u32[0x8011F200];
-  var state = mem.u8[0x8011B933];
-  if (logo_state == 0x802C5880) mode = 0;
-  else if (logo_state != 0 || state) {
+  if (logo_state == 0x802C5880 || logo_state == 0x00000000) {
+    mode = 0;
+  }
+  else {
     var state_main = mem.u8[0x8011B92F];
     if (state_main == 1) mode = 1;
     else if (state_main == 2) mode = 2;
     else {
       var menu_state = mem.u8[0x801D8DD5];
       if (menu_state == 0) {
-        if (state == 1 && (mem.u32[0x801DB09C] & 0x000000F0 || mem.u16[0x8011a600] <= 0)) mode = 6;
+        if (mem.u32[0x801DB09C] & 0x000000F0 || mem.u16[0x8011a600] <= 0) mode = 6;
         else {
-          if (state == 4) mode = 4;
-          else if (state == 1) mode = 3;
+          if (mem.u8[0x8011B933] == 4) mode = 4;
+          else mode = 3;
         }
       }
       else if ((0 < menu_state && menu_state < 9) || menu_state == 13 || menu_state == 18 || menu_state == 19) mode = 5;
