@@ -1,11 +1,10 @@
 # What is this?
 This is a Project64 script to enable Multiworld support for Ocarina of Time Randomizer.
-It attempts to use the same network protocol as the bizhawk-coop script, and should therefore be compatible with Bizhawk clients running the bizhawk-coop script. Although developement was tested with Bizhawk clients, a full run has not been tested with Bizhawk clients.
-This only supports direct connections.
+This is a client script that connects to a supporting server. A public server is available and is configured as the default.
 
 # Why?
-The original motivation was to learn how multiworld worked exactly, so that I could one day make Multiworld work on real hardware. Unfortunately I do not own a 64drive at this time as orders are currently closed.
-Also, Project64 is quite a bit more performant than Bizhawk and with less visual glitches (light from torches aren't visible through walls for example).
+Project64 is quite a bit more performant than Bizhawk and with less visual glitches (light from torches aren't visible through walls for example).
+It also crashes less.
 
 # Support
 If you find this useful, consider supporting me on [Patreon](https://www.patreon.com/Austin0)
@@ -28,10 +27,8 @@ If you find this useful, consider supporting me on [Patreon](https://www.patreon
 3. Click Run
 4. Type answers to questions in the box at the bottom.
 
-If you are hosting, you will need to ensure that the port you give the script is accesible from the clients that need to connect. This means port forwarding in most environments.
-
-If you are connecting, you will need the IP or hostname and port from the Host.
+The default server is most likely what you want.
+When it asks for a room, use the seed from the randomizer. If for some reason that fails, any string of letters should work.
+**Every player of the same Multiworld session needs to use the same room name!**
 
 **Note:** The script will not attempt to make any connections until the ROM is loaded.
-
-There is an auto-reconnect feature. If the connection to the host is broken for some reason, the script will attempt to reconnect every 5 seconds until a connection is established. Unfortunately, Project64 has a failed connection timeout of 20 seconds that I can't adjust. This will make it appear that Project64 is crashing for the duration of the 20 seconds if you try to close it or stop the script while it's attempting to connect.
