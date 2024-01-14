@@ -6,7 +6,6 @@ var oot = {
   player_names_addr:0,
   mw_progressive_items_state:0,
   version:'',
-  time:'',
   worlds:0,
   hash:[],
   name:'',
@@ -166,11 +165,9 @@ function setupRoom() {
                     new Buffer([
                       0x03,
                       oot.version.length,
-                      oot.time.length,
                       oot.worlds
                     ].concat(oot.hash)),
                     new Buffer(oot.version),
-                    new Buffer(oot.time),
                     new Buffer([oot.player_id]),
                     new Buffer(CRC)
                   ]));
@@ -403,7 +400,6 @@ function initVars() {
         player_names_addr:0,
         mw_progressive_items_state:0,
         version:'',
-        time:'',
         worlds:0,
         hash:[],
         name:'',
@@ -437,11 +433,6 @@ function initVars() {
         var c = mem.u8[cosmetic+0xAC+i];
         if (c == 0x00) break;
         oot.version += String.fromCharCode(c);
-      }
-      for (var i = 0; i < 0x24; i++) {
-        var c = mem.u8[cosmetic+0xE0+i];
-        if (c == 0x00) break;
-        oot.time += String.fromCharCode(c);
       }
       var worlds = '';
       for (var i = 0; i < 0x10; i++) {
