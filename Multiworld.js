@@ -258,7 +258,7 @@ function setupRoom() {
               state = 2;
             }
             else if (state == 2) {
-              bytes = (bytes << 8) | data[i];
+              bytes = ((bytes << 8) | data[i]) >>> 0;
               bytesNeeded--;
               if (bytesNeeded == 0) {
                 extra.push(bytes);
@@ -342,7 +342,7 @@ function setupRoom() {
               state = 2;
             }
             else if (state == 2) {
-              bytes = (bytes << 8) | data[i];
+              bytes = ((bytes << 8) | data[i]) >>> 0;
               bytesNeeded--;
               if (bytesNeeded == 0) {
                 command = -1;
