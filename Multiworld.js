@@ -1,4 +1,4 @@
-var VERSION = '1.0.4';
+var VERSION = '1.0.5';
 var save_context = 0x8011A5D0;
 var oot = {
   ready:false,
